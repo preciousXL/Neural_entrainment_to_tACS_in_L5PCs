@@ -1,0 +1,135 @@
+// snowp*************************************************************
+/*
+proc init_extra() {
+	forall {
+            insert extracellular
+			insert xtra
+        }
+}
+*/
+// snowp*************************************************************
+/*
+proc setpointers() { local done 
+  forall {
+    // if (ismembrane("xtra") && ismembrane("extracellular")) {
+	if (ismembrane("xtra")) {
+		for (x, 0) {		
+			setpointer ex_xtra(x), e_extracellular(x)
+		}
+    }
+  }
+}
+*/
+// snowp*************************************************************
+/*
+objref xx, yy, zz, length
+objref xint, yint, zint, range
+proc getcoords() { local ii, nn, xr
+	forall {
+	  if (ismembrane("xtra")) {
+		// get the data for the section
+		nn = n3d()		
+		xx = new Vector(nn) 
+		yy = new Vector(nn)
+		zz = new Vector(nn)
+		length = new Vector(nn) 		
+		for ii = 0,nn-1 {					
+			xx.x[ii] = x3d(ii) 
+			yy.x[ii] = y3d(ii) 
+			zz.x[ii] = z3d(ii)
+			length.x[ii] = arc3d(ii)
+		}
+		length.div(length.x[nn-1])
+		range = new Vector(nseg+2) 
+		range.indgen(1/nseg) 
+		range.sub(1/(2*nseg))
+		range.x[0]=0
+		range.x[nseg+1]=1
+		
+		xint = new Vector(nseg+2) 
+		yint = new Vector(nseg+2)
+		zint = new Vector(nseg+2)
+		xint.interpolate(range, length, xx)
+		yint.interpolate(range, length, yy)
+		zint.interpolate(range, length, zz)
+								
+        for ii = 1, nseg {			
+            xr = range.x[ii]				
+            x_xtra(xr) = xint.x[ii] 
+            y_xtra(xr) = yint.x[ii]
+            z_xtra(xr) = zint.x[ii]								
+        }									        
+	  }	  
+	}
+}
+*/
+// snowp*************************************************************
+
+proc calces_uniformE_theta_phi() { local theta,phi
+	theta = $1
+	phi = $2
+	theta = theta*PI/180
+	phi = phi*PI/180
+	Ex = sin(theta)*cos(phi) // 电场在三个方向上的分量
+	Ey = sin(theta)*sin(phi)
+	Ez = cos(theta)
+	forall {
+		if (ismembrane("xtra")) {
+			for(x,0){
+				es_xtra(x) = -(Ex*x_xtra(x) + Ey*y_xtra(x) + Ez*z_xtra(x))*1e-3 // Ve in [mV] <= µm*1e-3 = mm * 1mV/mm = mV 计算单位电场作用下每个间室的胞外电势，通过乘以电场幅值stim_xtra
+			}
+		}
+	}
+}
+
+
+proc calces_uniformE_ExEyEzNorm() {
+	// inputs are the components of unit vector of a given field direction
+	// |Ex|2 + |Ey|2 + |Ez|2 = 1
+	Ex = $1
+	Ey = $2
+	Ez = $3
+	forall {
+		if (ismembrane("xtra")) {
+			for(x,0){
+				es_xtra(x) = -(Ex*x_xtra(x) + Ey*y_xtra(x) + Ez*z_xtra(x))*1e-3 // Ve in [mV] <= µm*1e-3 = mm * 1mV/mm = mV 计算单位电场作用下每个间室的胞外电势，通过乘以电场幅值stim_xtra
+			}
+		}
+	}
+}
+
+// snowp*************************************************************
+n_time = tstop/dt+1
+objref stim_amp, stim_time
+stim_amp = new Vector(n_time)
+stim_time = new Vector(n_time)
+
+ATTACHED__ = 0
+proc attach_stim() {
+  forall {  
+    if (ATTACHED__ == 0) {  
+      if (ismembrane("xtra")) {
+        stim_amp.play(&stim_xtra, stim_time, 1) 
+        ATTACHED__ = 1
+      }
+    }
+  }
+}
+
+proc setstim_snowp() {
+	n_time = tstop/dt+1
+	stim_time.resize(n_time)
+	stim_amp.resize(n_time)
+	ATTACHED__ = 0
+    // attach_stim()
+}
+
+// snowp*************************************************************
+/*
+init_extra()
+getcoords()
+setpointers()
+*/
+
+
+

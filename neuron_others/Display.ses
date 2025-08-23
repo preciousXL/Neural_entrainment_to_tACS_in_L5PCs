@@ -1,0 +1,125 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[5]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+objref sh0,sh1,sh2
+
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(22,482)}
+{
+sh0 = new Graph(0)
+sh0.size(1000,1100,-100,40)
+scene_vector_[2] = sh0
+{sh0.view(990, -110, 110, 150, 5, 30, 300, 240)}
+graphList[0].append(sh0)
+sh0.save_name("graphList[0].")
+sh0.addexpr("v(.5)", 1, 1, 1, 0, 2)
+sh0.addexpr("mbSec.sec.v(1)", 2, 1, 1, 0, 2)
+}
+sh0.exec_menu("Erase Axis")
+sh0.xaxis(1000,1100,-100,5,0,0,1)
+sh0.yaxis(-80,40,1000,3,0,0,1)
+{
+xpanel("RunControl", 0)
+v_init = -70
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+runStopIn = 1
+xbutton("Single Step","steprun()")
+t = 1100
+xvalue("t","t", 2 )
+tstop = 1100
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.025
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+xpanel(701,21)
+}
+{
+sh1 = new PlotShape(0)
+sh1.size(-386.7,313.3,-150.382,1048.64)
+sh1.variable("v")
+scene_vector_[3] = sh1
+{sh1.view(-386.7, -150.382, 700, 1199.02, 331, 30, 325, 570)}
+fast_flush_list.append(sh1)
+sh1.save_name("fast_flush_list.")
+}
+{
+sh2= new PlotShape(0)
+sh2.size(-792.112,571.207,-154.611,1031.33)
+sh2.variable("cai")
+scene_vector_[4] = sh2
+{sh2.view(-792.112, -154.611, 1363.32, 1185.94, 5, 340, 300, 260)}
+fast_flush_list.append(sh2)
+sh2.save_name("fast_flush_list.")
+}
+objectvar scene_vector_[1]
+{doNotify()}
+
+sh1.exec_menu("Show Diam")
+sh1.exec_menu("Shape Plot")
+
+sh2.exec_menu("Show Diam")
+sh2.exec_menu("Shape Plot")
+sh2.scale(0,3)
+
+
+proc figBAP() {
+  st.amp   = 1.9
+  syn.imax =  0
+  print "Somatic current injection is ", st.amp, " nA"
+  print "Dendritic EPSP like current injection is ", syn.imax, " nA"
+  print ""
+  run()
+}
+
+proc figEPSP() {
+  st.amp   = 0
+  syn.imax = 0.6
+  print "Somatic current injection is ", st.amp, " nA"
+  print "Dendritic EPSP like current injection is ", syn.imax, " nA"
+  print ""
+  run()
+}
+
+proc figCa() {
+  st.amp   = 0
+  syn.imax = 1.7
+  print "Somatic current injection is ", st.amp, " nA"
+  print "Dendritic EPSP like current injection is ", syn.imax, " nA"
+  print ""
+  run()
+}
+
+proc figBAC() {
+  st.amp   = 1.9
+  syn.imax = 0.6
+  print "Somatic current injection is ", st.amp, " nA"
+  print "Dendritic EPSP like current injection is ", syn.imax, " nA"
+  print ""
+  run()
+}
+
+xpanel("A Model Of BAC firing")
+xbutton("a. Backpropagating AP","figBAP()")
+xbutton("b. EPSP","figEPSP()")
+xbutton("c. Ca spike","figCa()")
+xbutton("d. BAC firing","figBAC()")
+xpanel(701,300)
+
+sh0.color(2)
+sh0.label(0.7,0.7,"Dendrite@MB")
+sh0.color(1)
+sh0.label(0.8,0.8,"Soma")
+
+sh1.color(1)
+sh1.label(0.4,0.95,"Membrane Voltage")
+
+sh2.color(1)
+sh2.label(0.22,0.95,"Intracellular Calcium concentration")
+sh2.label(0.22,0.88,"                 (arbitrary units)")
+
+syn.imax=0
+st.amp=0
+

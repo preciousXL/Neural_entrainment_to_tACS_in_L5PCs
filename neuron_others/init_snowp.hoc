@@ -1,0 +1,53 @@
+//{load_file("nrngui.hoc")}
+strdef nrn_dir
+nrn_dir = getcwd() 								// nrn目录
+
+NSTACK_size = 100000 // always call with NSTACK at least 100000
+//*****Simulation Parameters****
+//steps_per_ms = 1/0.005 // 用于查找激活阈值的参数 by Ambeer
+//vm_record_mode = 1.0  // 定义记录变量，1代表记录
+//spike_record_mode = 4.0
+//record_dt = 0.025
+
+dt = 0.05000
+tstop = 1.000000
+v_init = -70.000000
+ss_init = 1.000000
+init_tstart = -1e+11  // defaults for steady state initialization
+init_dt = 1e+09       // defaults for steady state initialization
+temp = 37.000000
+
+//*****Cell model Parameters****
+cell_id = 0
+strdef cell_model_name
+cell_model_name = " "
+strdef nrn_model_ver
+nrn_model_ver = "maxH"
+replace_axon = 0.000000
+myelinate_axon = 1.000000
+scale_axon_diam = 2.453000
+scale_mainaxon_diam = 1.000000
+prune_axon = 0.000000
+scale_apic_diam = 1.876000
+scale_basal_diam = 1.946000
+scale_soma_area = 2.453000
+scale_basal_L = 1.170000
+min_myelinD = 0.200000
+min_myelinL = 20.000000
+max_myelin_order = 0.000000
+
+
+proc loadFiles() {
+	//{load_file("ssprocinit.hoc")}      		// steady state
+	{load_file("stdlib.hoc", "String")}
+	{load_file("interp_coordinates.hoc")} 	// 全是函数，获取形态坐标，并赋予胞外segment坐标x_xtra, 方向向量Dx_xtra, segment类型type_xtra, section顺序order_xtra.
+	{load_file("setpointers.hoc")}			// 当section形态、间室等发生改变，都需要重新调用setpointer()
+	{load_file("cell_chooser.hoc")}			// 创建cell，并根据预设参数改变神经元形态及离子机制
+	{load_file("edit_morphology.hoc")} 		// procs for editing cell morphology
+}
+
+// 运行下面两行以调用displaycomp.hoc绘制神经元形态
+// loadFiles()
+// cell_chooser(cell_id, cell_model_name) // 本质这个函数并没有输入参数
+
+

@@ -1,0 +1,8 @@
+load_file("nrngui.hoc")
+load_file("import3d.hoc")
+load_file("init_snowp.hoc")
+cell_id = 1
+cell_model_name = "L1_NGC-DA_bNAC219_1"
+loadFiles()
+cell_chooser()
+load_file("showcomp.ses") // 加载显示每个间室的.ses文件

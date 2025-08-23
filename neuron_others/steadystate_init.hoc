@@ -1,0 +1,24 @@
+// 200ms用于静息态
+v_init=-70
+tstop=900
+dt = 0.025
+steps_per_ms = 10
+
+proc init() {local saveDt, i
+
+  finitialize(v_init)
+  fcurrent()
+  saveDt = dt
+  dt = 20
+  for i=0,49 fadvance()
+  dt = saveDt
+}
+
+proc DoIt() {local i, j
+
+  init()
+  for i=0,999 {
+    for j=0,0.1/dt-1 fadvance()
+  }
+}
+

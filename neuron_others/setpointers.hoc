@@ -1,0 +1,21 @@
+// 设置每个section的指针，当section形态、间室等发生改变，都需要重新设置指针
+// 每当重新调用setpointers(), cell 3d坐标都重新生成
+// $Id: setpointers.hoc,v 1.4 2008/12/02 22:19:41 ted Exp ted $
+// set up the pointers after the sections have been created
+
+proc setpointers() { local done 
+  //savecoords()  // in interp_coordinates.hoc, determines interpolated locations of nodes
+  getSecRefs() // save coordinates, get section refs, and assign section types
+  forall {
+    if (ismembrane("xtra") && ismembrane("extracellular")) {
+      for (x, 0) {
+        setpointer ex_xtra(x), e_extracellular(x) // setpointer, 将膜机制（胞外电场Ex）连接到变量地址（神经元胞外电势Ve）
+      }
+    }
+  }
+  //print "After any change to cell geometry or nseg, be sure to invoke setpointers()"
+}
+
+
+//setpointers()
+
